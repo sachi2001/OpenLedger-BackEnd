@@ -28,7 +28,7 @@ async function sendAuthMail(receiverEmail, randomCode = 4545) {
             Started.<br> The code expires in 48 hours.</p>
             <button style="display: flex;justify-content: center;align-items: center; height: 40px; background-color:#EB4746;
             border: none;border-radius: 5px; color: white; font-size: 18px; padding-left: 30px; padding-right: 30px; text-align: center;
-            margin: 60px 60px 60px 270px; font-weight: bold;">Verify my email address</button>
+            margin: 60px 60px 60px 270px; font-weight: bold;">Verification Code ${randomCode}</button>
             <hr style="width: 600px;border-color: red;margin-left: 103px; ">
         
         </div>
