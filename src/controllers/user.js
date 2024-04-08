@@ -26,15 +26,24 @@ const emailValidation = async (req, res) => {
     })
 }
 
+// Check whether accout already available in the database 
+const emailExists = async (user_email) => {
+    let response = await UserModel.findOne({userEmail:user_email})
+    return (response != null)
+}
+
 // Generate random code for email verification ...
 // Registration step 01
 const verificationCode = async (req, res) => {
-    let passCode = true
+    let passCode = true, errorMessage = null
     const randomCode = (Math.random()*10000 + 10000).toFixed(0).toString().substring(1)
     console.log("Random Code : " + randomCode)
 
     // Check whether the account exists ...
-    if(emailExists(req.body['userEmail'])) passCode = false
+    if(await emailExists(req.body['userEmail'])) {
+        passCode = false
+        errorMessage = 'accountAlreadyExists'
+    }
 
     // Delete previous codes sent to the same email address 
     await TempCodeModel.deleteMany({"userEmail": req.body['userEmail']})
@@ -48,15 +57,23 @@ const verificationCode = async (req, res) => {
         console.log("Temp code saved...")
     }).catch(err => {
         console.log(err)
+        errorMessage = 'severError'
         passCode = false
     })
 
     // Sending code through email
-    if(!(passCode && await sendAuthMail(req.body['userEmail'], randomCode))) passCode = false 
+    if(passCode) {
+        if(!(await sendAuthMail(req.body['userEmail'], randomCode))) {
+            passCode = false
+            errorMessage = 'emailServerError'
+        }
+    }
+    
    
     // Respond to client device
     res.status(200).json({
-        codeSent: passCode
+        codeSent: passCode,
+        error: errorMessage
     })
 }
 
@@ -64,16 +81,9 @@ const verificationCode = async (req, res) => {
 // Find the last ID number use in the database
 async function lastID(){
     const response = await UserModel.find({}, {"userID": 1}).sort({"userID": -1}).limit(1)
+    if (response.length == 0) return 0
     return response[0]['userID']
 }   
-
-// Check whether accout already available in the database 
-const emailExists = async (user_email) => {
-    await UserModel.exists({userEmail: user_email}, (err, exists) => {
-        if (err) return false
-        return exists
-    })
-}
 
 // New User registration for system 
 // Password are converted to hash code before saving in the database 
@@ -88,6 +98,7 @@ const newUserRegistration = async (req, res) => {
         const hashPass = await bcrypt.hash(req.body['user_password'], saltRounds)
         let idNum = await lastID()
         
+        console.log('texting...')
         await UserModel.insertMany(
             {
                 userID: ++idNum,
