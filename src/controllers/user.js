@@ -33,6 +33,9 @@ const verificationCode = async (req, res) => {
     const randomCode = (Math.random()*10000 + 10000).toFixed(0).toString().substring(1)
     console.log("Random Code : " + randomCode)
 
+    // Check whether the account exists ...
+    if(emailExists(req.body['userEmail'])) passCode = false
+
     // Delete previous codes sent to the same email address 
     await TempCodeModel.deleteMany({"userEmail": req.body['userEmail']})
 
@@ -64,6 +67,14 @@ async function lastID(){
     return response[0]['userID']
 }   
 
+// Check whether accout already available in the database 
+const emailExists = async (user_email) => {
+    await UserModel.exists({userEmail: user_email}, (err, exists) => {
+        if (err) return false
+        return exists
+    })
+}
+
 // New User registration for system 
 // Password are converted to hash code before saving in the database 
 // New user registration step 03
@@ -76,7 +87,7 @@ const newUserRegistration = async (req, res) => {
         // Converting newly created password to hash code 
         const hashPass = await bcrypt.hash(req.body['user_password'], saltRounds)
         let idNum = await lastID()
-        console.log('testing...')
+        
         await UserModel.insertMany(
             {
                 userID: ++idNum,
