@@ -13,7 +13,7 @@ const PORT = 3000
 app.use(
     cors({
         origin:'http://localhost:5173',
-        // origin: 'https://openledgers.netlify.app'
+        origin: 'https://openledgers.netlify.app'
     })
 )
 
