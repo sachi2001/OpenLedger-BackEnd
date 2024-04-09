@@ -6,7 +6,6 @@ const { sendAuthMail } = require('../SystemEmail')
 
 const {UserModel, TempCodeModel} = require('../Model')
 
-
 // Validate the code send by the client/user 
 // Registration step 02
 const emailValidation = async (req, res) => {
@@ -26,7 +25,7 @@ const emailValidation = async (req, res) => {
     })
 }
 
-// Check whether accout already available in the database 
+// Check whether account already available in the database 
 const emailExists = async (user_email) => {
     let response = await UserModel.findOne({userEmail:user_email})
     return (response != null)
@@ -120,7 +119,7 @@ const newUserRegistration = async (req, res) => {
             process_success: process_success
         })
     } catch(e) {
-        // Error occour during the process
+        // Error occur during the process
         res.status(200).json({
             process_success: false,
             message: e
@@ -131,8 +130,36 @@ const newUserRegistration = async (req, res) => {
 }
 
 
+// Registration process ...
+const checkLogin = async (req, res) => {
+    console.log('Inside the checkLogin...')
+    let errorMessage = null, Validate = false;
+
+    // Email and password
+    const userEmail = req.body['user_email'],
+            userPass = req.body['user_pass'];
+
+    // Fetch data from the database
+    const response = await UserModel.findOne({userEmail: userEmail}, {passwordHash: 1})
+
+    // Check whether the email exists in the database
+    if(response != null) {
+        // Hash password compare
+        validate = await bcrypt.compare(userPass, response.passwordHash) // Compare the hash codes
+    } else {
+        errorMessage = 'invalidEmail'
+    }
+
+    res.status(200).json({
+        accountValidate: validate,
+        error: errorMessage
+    })
+}
+
+
 module.exports = {
     emailValidation,
     newUserRegistration,
-    verificationCode
+    verificationCode,
+    checkLogin
 }

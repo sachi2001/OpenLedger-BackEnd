@@ -1,6 +1,6 @@
 const express = require('express')
 
-const { newUserRegistration, verificationCode, emailValidation } = require('../controllers/user')
+const { newUserRegistration, verificationCode, emailValidation, checkLogin } = require('../controllers/user')
 
 const router = express.Router()
 
@@ -13,6 +13,8 @@ router.post('/newUserRegistration' ,newUserRegistration)
 router.post('/verificationCode', verificationCode)
 
 router.post('/codeValidation', emailValidation)
+
+router.post('/checkLogin', checkLogin)
 
 
 
