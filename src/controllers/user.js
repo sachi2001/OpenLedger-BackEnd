@@ -133,26 +133,38 @@ const newUserRegistration = async (req, res) => {
 // Registration process ...
 const checkLogin = async (req, res) => {
     console.log('Inside the checkLogin...')
-    let errorMessage = null, Validate = false;
+    // Initiate response variables
+    let errorMessage = null, Validate = false, userDetails = null;
 
-    // Email and password
-    const userEmail = req.body['user_email'],
-            userPass = req.body['user_pass'];
+    try{// Email and password
+        const userEmail = req.body['user_email'],
+                userPass = req.body['user_pass'];
 
-    // Fetch data from the database
-    const response = await UserModel.findOne({userEmail: userEmail}, {passwordHash: 1})
+        // Fetch data from the database
+        const response = await UserModel.findOne({userEmail: userEmail})
 
-    // Check whether the email exists in the database
-    if(response != null) {
-        // Hash password compare
-        validate = await bcrypt.compare(userPass, response.passwordHash) // Compare the hash codes
-    } else {
-        errorMessage = 'invalidEmail'
+        // Check whether the email exists in the database
+        if(response != null) {
+            // Hash password compare
+            validate = await bcrypt.compare(userPass, response.passwordHash) // Compare the hash codes
+            if(validate) userDetails = {
+                userID: response.userID,
+                userName: response.userName,
+                userEmail: response.userEmail,
+                userImageID: response.userImageID,
+                pictureScale: response.pictureScale
+            }
+        } else {
+            errorMessage = 'invalidEmail'
+        }
+    } catch(e) {
+        errorMessage = 'severError'
     }
 
     res.status(200).json({
         accountValidate: validate,
-        error: errorMessage
+        error: errorMessage,
+        userDetails: userDetails
     })
 }
 
