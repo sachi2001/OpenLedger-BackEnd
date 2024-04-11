@@ -132,7 +132,6 @@ const newUserRegistration = async (req, res) => {
 
 // Registration process ...
 const checkLogin = async (req, res) => {
-    console.log('Inside the checkLogin...')
     // Initiate response variables
     let errorMessage = null, Validate = false, userDetails = null;
 
