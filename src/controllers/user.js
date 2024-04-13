@@ -133,7 +133,7 @@ const newUserRegistration = async (req, res) => {
 // Registration process ...
 const checkLogin = async (req, res) => {
     // Initiate response variables
-    let errorMessage = null, Validate = false, userDetails = null;
+    let errorMessage = null, validate = false, userDetails = null;
 
     try{// Email and password
         const userEmail = req.body['user_email'],
