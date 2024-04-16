@@ -114,9 +114,10 @@ const newUserRegistration = async (req, res) => {
             process_success = false
         })
         
-        // Response to client 
+        // Response to client about image success
         res.status(process_success?201:200).json({
-            process_success: process_success
+            process_success: process_success,
+            message: null
         })
     } catch(e) {
         // Error occur during the process
@@ -131,6 +132,7 @@ const newUserRegistration = async (req, res) => {
 
 
 // Registration process ...
+// Final registration step
 const checkLogin = async (req, res) => {
     // Initiate response variables
     let errorMessage = null, validate = false, userDetails = null;
