@@ -7,7 +7,7 @@ class Fleet {
     }
 
     listen(PORT, func) {
-
+        // Initiate the sever 
         this.server = http.createServer((req, res) => {
             let count = 0
             for(let useCase of this.fleetBundle) {

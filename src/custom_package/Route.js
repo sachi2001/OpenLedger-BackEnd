@@ -31,6 +31,14 @@ class Route {
         })
     }
 
+    delete(routePath, funC) {
+        this.routeBundle.push({
+            route: routePath,
+            function: funC,
+            method: "DELETE"
+        })
+    }
+
 
 }
 
