@@ -5,7 +5,14 @@ const router = new Router();
 
 router.post('/edit', (req, res) =>{
     console.log("Banker Function")
-    res.end()
+
+
+    // Respond to the request 
+    res.end(JSON.stringify({
+        name : req.body['user_name']
+    }))
+
+    
 })
 
 

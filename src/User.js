@@ -3,7 +3,7 @@ class User {
     #userName;
     #userAge;
 
-    method() {
-        this.#userName;
+    method(username) {
+        this.#userName = username;
     }
 }
